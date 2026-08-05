@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Alina — A Little Countdown</title>
+<meta name="description" content="A little countdown to Alina's birthday.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Parisienne&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF3EC;
+    --blush:#F3D8DF;
+    --rose:#B76E79;
+    --rose-deep:#9C4F5C;
+    --plum:#3D2436;
+    --gold:#C9A24B;
+    --paper:#FFFCF8;
+    --shadow: rgba(61,36,54,0.15);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--plum);
+    font-family:'Cormorant Garamond', serif;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  ::selection{ background:var(--rose); color:var(--paper); }
+
+  a, button { font-family:inherit; }
+
+  /* ---------- Ambient background texture ---------- */
+  .bg-wash{
+    position:fixed; inset:0; z-index:-2;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 0%, var(--blush) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 50% at 85% 15%, #F7E4CC 0%, transparent 55%),
+      var(--cream);
+  }
+
+  /* ---------- Falling petals ---------- */
+  .petals{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
+  .petal{
+    position:absolute; top:-5%;
+    width:14px; height:14px;
+    background: linear-gradient(135deg, var(--rose), #E8B3BC);
+    border-radius: 0 60% 0 60%;
+    opacity:0.55;
+    animation-name: fall, sway;
+    animation-timing-function: linear, ease-in-out;
+    animation-iteration-count: infinite, infinite;
+  }
+  @keyframes fall{
+    from{ transform: translateY(-10vh) rotate(0deg); }
+    to{ transform: translateY(110vh) rotate(400deg); }
+  }
+  @keyframes sway{
+    0%,100%{ margin-left:-20px; }
+    50%{ margin-left:20px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .petal{ animation:none; display:none; }
+    html{ scroll-behavior:auto; }
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    padding: 8vh 6vw 6vh;
+    position:relative;
+  }
+
+  .eyebrow{
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    font-weight:500;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    font-size:0.78rem;
+    color:var(--rose-deep);
+    margin:0 0 1.2rem;
+  }
+
+  .name{
+    font-family:'Parisienne', cursive;
+    font-size:clamp(3.2rem, 11vw, 7.5rem);
+    line-height:1;
+    color:var(--rose-deep);
+    margin:0;
+    text-shadow: 0 6px 24px var(--shadow);
+  }
+
+  .tagline{
+    font-family:'Playfair Display', serif;
+    font-weight:500;
+    font-size:clamp(1.05rem, 2.4vw, 1.4rem);
+    color:var(--plum);
+    margin:1.1rem 0 3rem;
+    max-width:32ch;
+  }
+
+  /* ---------- Countdown ---------- */
+  .countdown{
+    display:flex;
+    gap: clamp(0.6rem, 3vw, 1.6rem);
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+
+  .unit{
+    background: var(--paper);
+    border: 1px solid rgba(201,162,75,0.4);
+    border-radius: 14px;
+    padding: 1.1rem 1.3rem;
+    min-width: 84px;
+    box-shadow: 0 12px 30px -12px var(--shadow);
+    position:relative;
+  }
+  .unit::after{
+    content:"";
+    position:absolute; inset:6px;
+    border:1px solid rgba(201,162,75,0.25);
+    border-radius:9px;
+    pointer-events:none;
+  }
+
+  .unit .num{
+    font-family:'Playfair Display', serif;
+    font-weight:600;
+    font-size: clamp(1.8rem, 5vw, 2.6rem);
+    color:var(--rose-deep);
+    display:block;
+    font-variant-numeric: tabular-nums;
+  }
+  .unit .label{
+    font-size:0.72rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--rose);
+    font-style:italic;
+  }
+
+  .scroll-cue{
+    margin-top:4rem;
+    font-size:0.8rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--rose-deep);
+    opacity:0.7;
+    display:flex; flex-direction:column; align-items:center; gap:0.4rem;
+  }
+  .scroll-cue .line{
+    width:1px; height:34px;
+    background: linear-gradient(var(--rose-deep), transparent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{opacity:0.3;} 50%{opacity:1;} }
+
+  /* ---------- Letter section ---------- */
+  .letter-wrap{
+    min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    padding: 10vh 6vw;
+  }
+
+  .seal{
+    width:56px; height:56px;
+    margin:0 auto 1.4rem;
+    border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, #C97F8A, var(--rose-deep));
+    box-shadow: 0 6px 14px -4px var(--shadow);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .seal svg{ width:26px; height:26px; fill:var(--cream); }
+
+  .letter{
+    max-width:640px;
+    background: var(--paper);
+    border-radius: 4px;
+    padding: clamp(2.2rem, 6vw, 4rem);
+    box-shadow: 0 30px 70px -30px var(--shadow);
+    position:relative;
+    opacity:0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+  .letter.in-view{ opacity:1; transform:translateY(0); }
+
+  .letter::before{
+    content:"";
+    position:absolute; inset:14px;
+    border:1px solid rgba(201,162,75,0.3);
+    pointer-events:none;
+  }
+
+  .letter h2{
+    font-family:'Playfair Display', serif;
+    font-weight:500;
+    font-style:italic;
+    text-align:center;
+    color:var(--rose-deep);
+    font-size:clamp(1.3rem, 3vw, 1.7rem);
+    margin: 0 0 1.6rem;
+  }
+
+  .letter p{
+    font-size: clamp(1.08rem, 2.2vw, 1.28rem);
+    line-height:1.75;
+    margin: 0 0 1.2rem;
+    color:var(--plum);
+  }
+
+  .letter .sign-off{
+    text-align:right;
+    font-family:'Parisienne', cursive;
+    font-size:2rem;
+    color:var(--rose-deep);
+    margin-top:1.8rem;
+  }
+
+  /* ---------- Celebration (post countdown) ---------- */
+  .celebrate{
+    display:none;
+    min-height:100vh;
+    align-items:center; justify-content:center;
+    flex-direction:column;
+    text-align:center;
+    padding: 6vh 6vw;
+  }
+  .celebrate.show{ display:flex; }
+  .celebrate .name{ margin-bottom:0.6rem; }
+  .celebrate p{
+    font-family:'Playfair Display', serif;
+    font-size:clamp(1.1rem, 2.6vw, 1.4rem);
+    max-width:34ch;
+  }
+
+  /* ---------- Music toggle ---------- */
+  .music-btn{
+    position:fixed;
+    bottom: 22px; right: 22px;
+    width:52px; height:52px;
+    border-radius:50%;
+    border:1px solid rgba(201,162,75,0.5);
+    background:var(--paper);
+    box-shadow: 0 10px 24px -10px var(--shadow);
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    z-index: 20;
+    transition: transform 0.2s ease;
+  }
+  .music-btn:hover{ transform: scale(1.06); }
+  .music-btn svg{ width:20px; height:20px; fill:var(--rose-deep); }
+  .music-btn .bars{ display:flex; align-items:flex-end; gap:2px; height:16px; }
+  .music-btn .bars span{
+    width:3px; background:var(--rose-deep); border-radius:2px;
+    animation: bar 1s ease-in-out infinite;
+  }
+  .music-btn.playing .bars span{ animation-play-state: running; }
+  .music-btn:not(.playing) .bars span{ animation-play-state: paused; height:4px !important; }
+  .bars span:nth-child(1){ animation-delay:0s; }
+  .bars span:nth-child(2){ animation-delay:0.15s; }
+  .bars span:nth-child(3){ animation-delay:0.3s; }
+  @keyframes bar{
+    0%,100%{ height:4px; }
+    50%{ height:16px; }
+  }
+
+  footer{
+    text-align:center;
+    font-size:0.75rem;
+    color:var(--rose);
+    opacity:0.6;
+    padding: 2rem 1rem 3rem;
+  }
+  footer a{ color:inherit; }
+</style>
+</head>
+<body>
+
+<div class="bg-wash"></div>
+<div class="petals" id="petals"></div>
+
+<section class="hero">
+  <p class="eyebrow">a little something for</p>
+  <h1 class="name">Alina Shah Bakht</h1>
+  <p class="tagline">Every year the world gets a little luckier — because it still has you in it.</p>
+
+  <div class="countdown" id="countdown">
+    <div class="unit"><span class="num" id="days">00</span><span class="label">Days</span></div>
+    <div class="unit"><span class="num" id="hours">00</span><span class="label">Hours</span></div>
+    <div class="unit"><span class="num" id="minutes">00</span><span class="label">Minutes</span></div>
+    <div class="unit"><span class="num" id="seconds">00</span><span class="label">Seconds</span></div>
+  </div>
+
+  <div class="scroll-cue"><span class="line"></span>read this first</div>
+</section>
+
+<section class="letter-wrap">
+  <div class="letter" id="letter">
+    <div class="seal">
+      <svg viewBox="0 0 24 24"><path d="M12 21s-8-5.1-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.9-8 11-8 11z"/></svg>
+    </div>
+    <h2>Before the day arrives, a few things you should know</h2>
+    <p>Alina, jaan — I keep looking at the calendar like it's going to move faster if I stare hard enough. It won't. So instead I'm building you this silly, sweet little page to hold the waiting.</p>
+    <p>You have this way of making ordinary days feel like they mattered — a random Tuesday, a boring lecture, a five-minute phone call between classes. I don't think you even notice you're doing it. I do.</p>
+    <p>So this countdown isn't really counting down to a date. It's counting down to a day that's entirely, unapologetically about you — and I intend to spend every minute of it reminding you why.</p>
+    <p>Until then: drink water, sleep on time (I know, I know), and know that somewhere, someone is genuinely this excited about your birthday.</p>
+    <p class="sign-off">— always, only, yours</p>
+  </div>
+</section>
+
+<section class="celebrate" id="celebrate">
+  <h1 class="name">Happy Birthday</h1>
+  <p>Today the countdown ends and the celebrating begins, Alina. I hope today is as soft and golden as you've always deserved. I love you — happy birthday, my love.</p>
+</section>
+
+<button class="music-btn" id="musicBtn" aria-label="Toggle music" aria-pressed="false">
+  <svg id="musicIconOff" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+  <div class="bars" id="musicBars" style="display:none;">
+    <span></span><span></span><span></span>
+  </div>
+</button>
+
+<audio id="bgAudio" loop preload="none">
+  <source src="https://www.bensound.com/bensound-music/bensound-tenderness.mp3" type="audio/mpeg">
+</audio>
+
+<footer>made with love, for you · music: "Tenderness" by Bensound.com</footer>
+
+<script>
+  // ---------- Falling petals ----------
+  (function(){
+    var container = document.getElementById('petals');
+    var count = window.innerWidth < 600 ? 12 : 22;
+    for (var i = 0; i < count; i++){
+      var p = document.createElement('div');
+      p.className = 'petal';
+      var left = Math.random() * 100;
+      var duration = 9 + Math.random() * 10;
+      var delay = Math.random() * 12;
+      var swayDur = 3 + Math.random() * 3;
+      var size = 8 + Math.random() * 10;
+      p.style.left = left + 'vw';
+      p.style.width = size + 'px';
+      p.style.height = size + 'px';
+      p.style.animationDuration = duration + 's, ' + swayDur + 's';
+      p.style.animationDelay = '-' + delay + 's, -' + (Math.random()*swayDur) + 's';
+      container.appendChild(p);
+    }
+  })();
+
+  // ---------- Countdown ----------
+  var target = new Date("2026-08-06T00:00:00+05:00").getTime();
+
+  var daysEl = document.getElementById('days');
+  var hoursEl = document.getElementById('hours');
+  var minsEl = document.getElementById('minutes');
+  var secsEl = document.getElementById('seconds');
+  var countdownEl = document.getElementById('countdown');
+  var celebrateEl = document.getElementById('celebrate');
+
+  function pad(n){ return String(n).padStart(2, '0'); }
+
+  function tick(){
+    var now = Date.now();
+    var diff = target - now;
+
+    if (diff <= 0){
+      countdownEl.style.display = 'none';
+      celebrateEl.classList.add('show');
+      clearInterval(timer);
+      return;
+    }
+
+    var d = Math.floor(diff / 86400000);
+    var h = Math.floor((diff % 86400000) / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+
+    daysEl.textContent = pad(d);
+    hoursEl.textContent = pad(h);
+    minsEl.textContent = pad(m);
+    secsEl.textContent = pad(s);
+  }
+
+  var timer = setInterval(tick, 1000);
+  tick();
+
+  // ---------- Letter reveal on scroll ----------
+  var letter = document.getElementById('letter');
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting){ letter.classList.add('in-view'); }
+    });
+  }, { threshold: 0.2 });
+  observer.observe(letter);
+
+  // ---------- Music toggle ----------
+  var btn = document.getElementById('musicBtn');
+  var audio = document.getElementById('bgAudio');
+  var bars = document.getElementById('musicBars');
+  var iconOff = document.getElementById('musicIconOff');
+  var playing = false;
+
+  btn.addEventListener('click', function(){
+    if (!playing){
+      audio.play().then(function(){
+        playing = true;
+        btn.classList.add('playing');
+        btn.setAttribute('aria-pressed', 'true');
+        iconOff.style.display = 'none';
+        bars.style.display = 'flex';
+      }).catch(function(){
+        // Autoplay / load restrictions — fail silently, keep icon as off
+      });
+    } else {
+      audio.pause();
+      playing = false;
+      btn.classList.remove('playing');
+      btn.setAttribute('aria-pressed', 'false');
+      iconOff.style.display = 'block';
+      bars.style.display = 'none';
+    }
+  });
+</script>
+
+</body>
+</html>
