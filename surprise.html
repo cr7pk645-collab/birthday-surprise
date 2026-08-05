@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Surprise — For Alina</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+<div class="fireflies" id="fireflies"></div>
+<div class="petals" id="petals"></div>
+
+<nav class="nav">
+  <a href="index.html">Home</a>
+  <a href="letter.html">Letter</a>
+  <a href="surprise.html">Surprise</a>
+  <a href="countdown.html">Countdown</a>
+</nav>
+
+<section class="page" style="padding-top:14vh;">
+  <p class="eyebrow fade-up">tap each card</p>
+  <h1 class="page-title fade-up" style="animation-delay:0.1s">A few small reasons</h1>
+  <p class="tagline fade-up" style="animation-delay:0.2s">Flip these around, one at a time.</p>
+
+  <div class="flip-grid fade-up" style="animation-delay:0.3s" id="flipGrid">
+    <div class="flip-card">
+      <div class="flip-inner">
+        <div class="flip-front">01</div>
+        <div class="flip-back">You remember small details other people forget.</div>
+      </div>
+    </div>
+    <div class="flip-card">
+      <div class="flip-inner">
+        <div class="flip-front">02</div>
+        <div class="flip-back">Your laugh makes a room feel warmer.</div>
+      </div>
+    </div>
+    <div class="flip-card">
+      <div class="flip-inner">
+        <div class="flip-front">03</div>
+        <div class="flip-back">You show up for people, even on your busiest days.</div>
+      </div>
+    </div>
+    <div class="flip-card">
+      <div class="flip-inner">
+        <div class="flip-front">04</div>
+        <div class="flip-back">You're honest, even when it's the harder thing to be.</div>
+      </div>
+    </div>
+    <div class="flip-card">
+      <div class="flip-inner">
+        <div class="flip-front">05</div>
+        <div class="flip-back">You make ordinary days feel a little more worth it.</div>
+      </div>
+    </div>
+    <div class="flip-card">
+      <div class="flip-inner">
+        <div class="flip-front">06</div>
+        <div class="flip-back">You're still growing, and you never stop trying.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="envelope-wrap fade-up" style="animation-delay:0.4s">
+    <div class="envelope" id="envelope">
+      <div class="env-back"></div>
+      <div class="env-letter">One more thing, Alina — happy almost-birthday. I hope this year treats you gently and teaches you something good.</div>
+      <div class="env-flap"></div>
+      <div class="env-seal">
+        <svg viewBox="0 0 24 24"><path d="M12 21s-8-5.1-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.9-8 11-8 11z"/></svg>
+      </div>
+    </div>
+    <p class="env-hint" id="envHint">tap the envelope to open it</p>
+  </div>
+</section>
+
+<button class="music-btn" id="musicBtn" aria-label="Toggle music" aria-pressed="false">
+  <svg id="musicIconOff" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+  <div class="bars" id="musicBars" style="display:none;">
+    <span></span><span></span><span></span>
+  </div>
+</button>
+<audio id="bgAudio" loop preload="none">
+  <source src="https://www.bensound.com/bensound-music/bensound-tenderness.mp3" type="audio/mpeg">
+</audio>
+
+<footer>made for you</footer>
+
+<script src="main.js"></script>
+<script>
+  document.querySelectorAll('.flip-card').forEach(function(card){
+    card.addEventListener('click', function(){
+      card.classList.toggle('flipped');
+    });
+  });
+
+  var envelope = document.getElementById('envelope');
+  var envHint = document.getElementById('envHint');
+  envelope.addEventListener('click', function(){
+    envelope.classList.toggle('open');
+    envHint.textContent = envelope.classList.contains('open') ? 'tap again to close' : 'tap the envelope to open it';
+  });
+</script>
+</body>
+</html>
