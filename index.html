@@ -16,6 +16,7 @@
     --rose-deep:#9C4F5C;
     --plum:#3D2436;
     --gold:#C9A24B;
+    --gold-soft:#E8CE9C;
     --paper:#FFFCF8;
     --shadow: rgba(61,36,54,0.15);
   }
@@ -33,42 +34,72 @@
   }
 
   ::selection{ background:var(--rose); color:var(--paper); }
-
   a, button { font-family:inherit; }
 
-  /* ---------- Ambient background texture ---------- */
+  /* ---------- Ambient shifting background ---------- */
   .bg-wash{
-    position:fixed; inset:0; z-index:-2;
+    position:fixed; inset:-10%; z-index:-3;
     background:
-      radial-gradient(ellipse 80% 50% at 20% 0%, var(--blush) 0%, transparent 60%),
-      radial-gradient(ellipse 70% 50% at 85% 15%, #F7E4CC 0%, transparent 55%),
+      radial-gradient(ellipse 60% 45% at 15% 10%, var(--blush) 0%, transparent 60%),
+      radial-gradient(ellipse 55% 45% at 88% 20%, #F7E4CC 0%, transparent 55%),
+      radial-gradient(ellipse 50% 40% at 50% 95%, var(--blush) 0%, transparent 60%),
       var(--cream);
+    animation: drift 22s ease-in-out infinite alternate;
+  }
+  @keyframes drift{
+    0%{ transform: translate(0,0) scale(1); }
+    100%{ transform: translate(-2%, 1.5%) scale(1.04); }
+  }
+
+  /* ---------- Twinkling sparkles ---------- */
+  .sparkles{ position:fixed; inset:0; z-index:-2; pointer-events:none; overflow:hidden; }
+  .sparkle{
+    position:absolute;
+    width:4px; height:4px;
+    border-radius:50%;
+    background: var(--gold);
+    opacity:0;
+    animation: twinkle 3.5s ease-in-out infinite;
+    box-shadow: 0 0 6px 1px rgba(201,162,75,0.6);
+  }
+  @keyframes twinkle{
+    0%, 100%{ opacity:0; transform:scale(0.4); }
+    50%{ opacity:0.9; transform:scale(1.15); }
   }
 
   /* ---------- Falling petals ---------- */
   .petals{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
   .petal{
     position:absolute; top:-5%;
-    width:14px; height:14px;
     background: linear-gradient(135deg, var(--rose), #E8B3BC);
     border-radius: 0 60% 0 60%;
     opacity:0.55;
     animation-name: fall, sway;
     animation-timing-function: linear, ease-in-out;
     animation-iteration-count: infinite, infinite;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.06));
   }
   @keyframes fall{
     from{ transform: translateY(-10vh) rotate(0deg); }
     to{ transform: translateY(110vh) rotate(400deg); }
   }
   @keyframes sway{
-    0%,100%{ margin-left:-20px; }
-    50%{ margin-left:20px; }
+    0%,100%{ margin-left:-24px; }
+    50%{ margin-left:24px; }
   }
+
   @media (prefers-reduced-motion: reduce){
-    .petal{ animation:none; display:none; }
+    .petal, .sparkle, .bg-wash, .fade-up, .heart-orb, .flourish{ animation:none !important; }
     html{ scroll-behavior:auto; }
   }
+
+  /* ---------- Entrance animation helper ---------- */
+  .fade-up{
+    opacity:0;
+    transform: translateY(22px);
+    animation: fadeUp 1s cubic-bezier(.2,.8,.25,1) forwards;
+  }
+  @keyframes fadeUp{ to{ opacity:1; transform:translateY(0); } }
 
   /* ---------- Hero ---------- */
   .hero{
@@ -79,11 +110,22 @@
     position:relative;
   }
 
+  .heart-orb{
+    width: clamp(60px, 10vw, 90px);
+    margin-bottom: 0.6rem;
+    animation: breathe 4.5s ease-in-out infinite;
+    filter: drop-shadow(0 6px 14px var(--shadow));
+  }
+  @keyframes breathe{
+    0%,100%{ transform: scale(1) rotate(-2deg); }
+    50%{ transform: scale(1.07) rotate(2deg); }
+  }
+
   .eyebrow{
     font-family:'Playfair Display', serif;
     font-style:italic;
     font-weight:500;
-    letter-spacing:0.12em;
+    letter-spacing:0.14em;
     text-transform:uppercase;
     font-size:0.78rem;
     color:var(--rose-deep);
@@ -94,9 +136,19 @@
     font-family:'Parisienne', cursive;
     font-size:clamp(3.2rem, 11vw, 7.5rem);
     line-height:1;
-    color:var(--rose-deep);
     margin:0;
+    background: linear-gradient(100deg, var(--rose-deep) 20%, var(--gold) 45%, var(--rose-deep) 70%);
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 6s ease-in-out infinite;
     text-shadow: 0 6px 24px var(--shadow);
+  }
+  @keyframes shimmer{
+    0%{ background-position: 0% center; }
+    50%{ background-position: 100% center; }
+    100%{ background-position: 0% center; }
   }
 
   .tagline{
@@ -119,18 +171,23 @@
   .unit{
     background: var(--paper);
     border: 1px solid rgba(201,162,75,0.4);
-    border-radius: 14px;
+    border-radius: 16px;
     padding: 1.1rem 1.3rem;
     min-width: 84px;
     box-shadow: 0 12px 30px -12px var(--shadow);
     position:relative;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
   }
   .unit::after{
     content:"";
     position:absolute; inset:6px;
     border:1px solid rgba(201,162,75,0.25);
-    border-radius:9px;
+    border-radius:11px;
     pointer-events:none;
+  }
+  .unit.bump{
+    transform: scale(1.08);
+    box-shadow: 0 16px 34px -10px var(--shadow);
   }
 
   .unit .num{
@@ -170,6 +227,7 @@
     min-height:100vh;
     display:flex; align-items:center; justify-content:center;
     padding: 10vh 6vw;
+    position:relative;
   }
 
   .seal{
@@ -185,15 +243,16 @@
   .letter{
     max-width:640px;
     background: var(--paper);
-    border-radius: 4px;
+    border-radius: 6px;
     padding: clamp(2.2rem, 6vw, 4rem);
     box-shadow: 0 30px 70px -30px var(--shadow);
     position:relative;
     opacity:0;
-    transform: translateY(30px);
-    transition: opacity 1s ease, transform 1s ease;
+    transform: translateY(40px) rotateX(6deg);
+    transform-origin: top center;
+    transition: opacity 1.1s cubic-bezier(.2,.8,.25,1), transform 1.1s cubic-bezier(.2,.8,.25,1);
   }
-  .letter.in-view{ opacity:1; transform:translateY(0); }
+  .letter.in-view{ opacity:1; transform:translateY(0) rotateX(0deg); }
 
   .letter::before{
     content:"";
@@ -201,6 +260,21 @@
     border:1px solid rgba(201,162,75,0.3);
     pointer-events:none;
   }
+
+  .flourish{
+    position:absolute;
+    width: 34px; height:34px;
+    opacity:0.55;
+    animation: swayFlourish 5s ease-in-out infinite;
+  }
+  .flourish svg{ width:100%; height:100%; fill:var(--gold); }
+  .flourish.tl{ top:10px; left:10px; }
+  .flourish.br{ bottom:10px; right:10px; transform: rotate(180deg); }
+  @keyframes swayFlourish{
+    0%,100%{ transform: rotate(0deg) scale(1); }
+    50%{ transform: rotate(4deg) scale(1.05); }
+  }
+  .flourish.br{ animation-delay: -2.5s; }
 
   .letter h2{
     font-family:'Playfair Display', serif;
@@ -217,7 +291,15 @@
     line-height:1.75;
     margin: 0 0 1.2rem;
     color:var(--plum);
+    opacity:0;
+    transform: translateY(14px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
   }
+  .letter.in-view p{ opacity:1; transform:translateY(0); }
+  .letter.in-view p:nth-of-type(1){ transition-delay: 0.15s; }
+  .letter.in-view p:nth-of-type(2){ transition-delay: 0.3s; }
+  .letter.in-view p:nth-of-type(3){ transition-delay: 0.45s; }
+  .letter.in-view p:nth-of-type(4){ transition-delay: 0.6s; }
 
   .letter .sign-off{
     text-align:right;
@@ -235,6 +317,8 @@
     flex-direction:column;
     text-align:center;
     padding: 6vh 6vw;
+    position:relative;
+    overflow:hidden;
   }
   .celebrate.show{ display:flex; }
   .celebrate .name{ margin-bottom:0.6rem; }
@@ -242,6 +326,17 @@
     font-family:'Playfair Display', serif;
     font-size:clamp(1.1rem, 2.6vw, 1.4rem);
     max-width:34ch;
+  }
+
+  .confetti-piece{
+    position:absolute;
+    top:-10%;
+    width:8px; height:14px;
+    opacity:0.9;
+    animation: confettiFall linear forwards;
+  }
+  @keyframes confettiFall{
+    to{ transform: translateY(120vh) rotate(600deg); opacity:0.3; }
   }
 
   /* ---------- Music toggle ---------- */
@@ -258,6 +353,20 @@
     z-index: 20;
     transition: transform 0.2s ease;
   }
+  .music-btn::before{
+    content:"";
+    position:absolute; inset:-6px;
+    border-radius:50%;
+    border:1px solid var(--gold);
+    opacity:0;
+  }
+  .music-btn.playing::before{
+    animation: ring 1.8s ease-out infinite;
+  }
+  @keyframes ring{
+    0%{ opacity:0.6; transform:scale(1); }
+    100%{ opacity:0; transform:scale(1.5); }
+  }
   .music-btn:hover{ transform: scale(1.06); }
   .music-btn svg{ width:20px; height:20px; fill:var(--rose-deep); }
   .music-btn .bars{ display:flex; align-items:flex-end; gap:2px; height:16px; }
@@ -265,8 +374,6 @@
     width:3px; background:var(--rose-deep); border-radius:2px;
     animation: bar 1s ease-in-out infinite;
   }
-  .music-btn.playing .bars span{ animation-play-state: running; }
-  .music-btn:not(.playing) .bars span{ animation-play-state: paused; height:4px !important; }
   .bars span:nth-child(1){ animation-delay:0s; }
   .bars span:nth-child(2){ animation-delay:0.15s; }
   .bars span:nth-child(3){ animation-delay:0.3s; }
@@ -288,40 +395,56 @@
 <body>
 
 <div class="bg-wash"></div>
+<div class="sparkles" id="sparkles"></div>
 <div class="petals" id="petals"></div>
 
 <section class="hero">
-  <p class="eyebrow">a little something for</p>
-  <h1 class="name">Alina Shah Bakht</h1>
-  <p class="tagline">Every year the world gets a little luckier — because it still has you in it.</p>
+  <svg class="heart-orb fade-up" style="animation-delay:0.05s" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="orbGrad" cx="35%" cy="30%" r="75%">
+        <stop offset="0%" stop-color="#F4D8DE"/>
+        <stop offset="55%" stop-color="#C97F8A"/>
+        <stop offset="100%" stop-color="#9C4F5C"/>
+      </radialGradient>
+    </defs>
+    <circle cx="50" cy="50" r="46" fill="url(#orbGrad)"/>
+    <path d="M50 68 C 30 54, 20 42, 20 30 C 20 18, 36 14, 50 26 C 64 14, 80 18, 80 30 C 80 42, 70 54, 50 68 Z"
+          fill="#FBF3EC" opacity="0.9"/>
+  </svg>
 
-  <div class="countdown" id="countdown">
+  <p class="eyebrow fade-up" style="animation-delay:0.15s">a little something for</p>
+  <h1 class="name fade-up" style="animation-delay:0.3s">Alina Shah Bakht</h1>
+  <p class="tagline fade-up" style="animation-delay:0.45s">Every year, the world feels a little brighter, because you're in it.</p>
+
+  <div class="countdown fade-up" id="countdown" style="animation-delay:0.6s">
     <div class="unit"><span class="num" id="days">00</span><span class="label">Days</span></div>
     <div class="unit"><span class="num" id="hours">00</span><span class="label">Hours</span></div>
     <div class="unit"><span class="num" id="minutes">00</span><span class="label">Minutes</span></div>
     <div class="unit"><span class="num" id="seconds">00</span><span class="label">Seconds</span></div>
   </div>
 
-  <div class="scroll-cue"><span class="line"></span>read this first</div>
+  <div class="scroll-cue fade-up" style="animation-delay:0.8s"><span class="line"></span>read this first</div>
 </section>
 
 <section class="letter-wrap">
   <div class="letter" id="letter">
+    <div class="flourish tl"><svg viewBox="0 0 24 24"><path d="M3 21c6-1 9-6 9-12S9 3 3 3v2c5 0 7 4 7 6s-2 8-7 9v1z"/></svg></div>
+    <div class="flourish br"><svg viewBox="0 0 24 24"><path d="M3 21c6-1 9-6 9-12S9 3 3 3v2c5 0 7 4 7 6s-2 8-7 9v1z"/></svg></div>
     <div class="seal">
       <svg viewBox="0 0 24 24"><path d="M12 21s-8-5.1-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.9-8 11-8 11z"/></svg>
     </div>
     <h2>Before the day arrives, a few things you should know</h2>
-    <p>Alina, jaan — I keep looking at the calendar like it's going to move faster if I stare hard enough. It won't. So instead I'm building you this silly, sweet little page to hold the waiting.</p>
-    <p>You have this way of making ordinary days feel like they mattered — a random Tuesday, a boring lecture, a five-minute phone call between classes. I don't think you even notice you're doing it. I do.</p>
-    <p>So this countdown isn't really counting down to a date. It's counting down to a day that's entirely, unapologetically about you — and I intend to spend every minute of it reminding you why.</p>
-    <p>Until then: drink water, sleep on time (I know, I know), and know that somewhere, someone is genuinely this excited about your birthday.</p>
-    <p class="sign-off">— always, only, yours</p>
+    <p>Alina, I keep checking the calendar, hoping it will move faster if I stare hard enough. It won't. So instead, I made you this small page to hold the waiting.</p>
+    <p>You have a way of making ordinary days feel special — a plain Tuesday, a boring lecture, a short phone call between classes. I don't think you even notice you're doing it. I do.</p>
+    <p>So this countdown isn't really about a date. It's counting down to a day that is fully, simply yours — and I plan to spend all of it reminding you why.</p>
+    <p>Until then: drink some water, try to sleep on time, and know that somewhere, someone is genuinely excited for your birthday.</p>
+    <p class="sign-off">— always yours</p>
   </div>
 </section>
 
 <section class="celebrate" id="celebrate">
   <h1 class="name">Happy Birthday</h1>
-  <p>Today the countdown ends and the celebrating begins, Alina. I hope today is as soft and golden as you've always deserved. I love you — happy birthday, my love.</p>
+  <p>Today the countdown ends and the celebrating begins, Alina. I hope today is soft, golden, and exactly as good as you deserve.</p>
 </section>
 
 <button class="music-btn" id="musicBtn" aria-label="Toggle music" aria-pressed="false">
@@ -335,7 +458,7 @@
   <source src="https://www.bensound.com/bensound-music/bensound-tenderness.mp3" type="audio/mpeg">
 </audio>
 
-<footer>made with love, for you · music: "Tenderness" by Bensound.com</footer>
+<footer>made for you</footer>
 
 <script>
   // ---------- Falling petals ----------
@@ -359,6 +482,21 @@
     }
   })();
 
+  // ---------- Twinkling sparkles ----------
+  (function(){
+    var container = document.getElementById('sparkles');
+    var count = window.innerWidth < 600 ? 14 : 28;
+    for (var i = 0; i < count; i++){
+      var s = document.createElement('div');
+      s.className = 'sparkle';
+      s.style.left = (Math.random() * 100) + 'vw';
+      s.style.top = (Math.random() * 100) + 'vh';
+      s.style.animationDelay = (-Math.random() * 3.5) + 's';
+      s.style.animationDuration = (2.5 + Math.random() * 2.5) + 's';
+      container.appendChild(s);
+    }
+  })();
+
   // ---------- Countdown ----------
   var target = new Date("2026-08-06T00:00:00+05:00").getTime();
 
@@ -368,8 +506,36 @@
   var secsEl = document.getElementById('seconds');
   var countdownEl = document.getElementById('countdown');
   var celebrateEl = document.getElementById('celebrate');
+  var units = document.querySelectorAll('.unit');
 
   function pad(n){ return String(n).padStart(2, '0'); }
+
+  function bump(){
+    units.forEach(function(u){
+      u.classList.add('bump');
+      setTimeout(function(){ u.classList.remove('bump'); }, 220);
+    });
+  }
+
+  function fireConfetti(){
+    var colors = ['#B76E79','#C9A24B','#E8B3BC','#9C4F5C','#F3D8DF'];
+    for (var i = 0; i < 60; i++){
+      (function(i){
+        setTimeout(function(){
+          var c = document.createElement('div');
+          c.className = 'confetti-piece';
+          c.style.left = (Math.random() * 100) + '%';
+          c.style.background = colors[Math.floor(Math.random()*colors.length)];
+          c.style.animationDuration = (2.6 + Math.random() * 2) + 's';
+          c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+          celebrateEl.appendChild(c);
+          setTimeout(function(){ c.remove(); }, 5200);
+        }, i * 60);
+      })(i);
+    }
+  }
+
+  var confettiFired = false;
 
   function tick(){
     var now = Date.now();
@@ -378,6 +544,11 @@
     if (diff <= 0){
       countdownEl.style.display = 'none';
       celebrateEl.classList.add('show');
+      if (!confettiFired){
+        confettiFired = true;
+        fireConfetti();
+        setInterval(fireConfetti, 6000);
+      }
       clearInterval(timer);
       return;
     }
@@ -391,6 +562,7 @@
     hoursEl.textContent = pad(h);
     minsEl.textContent = pad(m);
     secsEl.textContent = pad(s);
+    bump();
   }
 
   var timer = setInterval(tick, 1000);
@@ -421,7 +593,7 @@
         iconOff.style.display = 'none';
         bars.style.display = 'flex';
       }).catch(function(){
-        // Autoplay / load restrictions — fail silently, keep icon as off
+        // Autoplay / load restrictions -- fail silently, keep icon as off
       });
     } else {
       audio.pause();
