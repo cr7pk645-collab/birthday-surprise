@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Countdown — For Alina</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+<div class="fireflies" id="fireflies"></div>
+<div class="petals" id="petals"></div>
+
+<nav class="nav">
+  <a href="index.html">Home</a>
+  <a href="letter.html">Letter</a>
+  <a href="surprise.html">Surprise</a>
+  <a href="countdown.html">Countdown</a>
+</nav>
+
+<section class="page" id="countdownPage">
+  <p class="eyebrow fade-up">counting down to</p>
+  <h1 class="script-name fade-up" style="animation-delay:0.15s; font-size:clamp(2.4rem,8vw,5rem);">Your Day</h1>
+  <p class="tagline fade-up" style="animation-delay:0.3s">Every second is one less to wait.</p>
+
+  <div class="countdown fade-up" id="countdown" style="animation-delay:0.45s">
+    <div class="unit"><span class="num" id="days">00</span><span class="label">Days</span></div>
+    <div class="unit"><span class="num" id="hours">00</span><span class="label">Hours</span></div>
+    <div class="unit"><span class="num" id="minutes">00</span><span class="label">Minutes</span></div>
+    <div class="unit"><span class="num" id="seconds">00</span><span class="label">Seconds</span></div>
+  </div>
+</section>
+
+<section class="celebrate" id="celebrate">
+  <h1 class="script-name" style="font-size:clamp(2.6rem,9vw,6rem);">Happy Birthday</h1>
+  <p class="tagline">Today the countdown ends and the celebrating begins, Alina. I hope today is soft, golden, and exactly as good as you deserve.</p>
+  <div class="btn-row">
+    <a class="btn primary" href="letter.html">Read Your Letter Again</a>
+    <a class="btn" href="surprise.html">Open More Surprises</a>
+  </div>
+</section>
+
+<button class="music-btn" id="musicBtn" aria-label="Toggle music" aria-pressed="false">
+  <svg id="musicIconOff" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+  <div class="bars" id="musicBars" style="display:none;">
+    <span></span><span></span><span></span>
+  </div>
+</button>
+<audio id="bgAudio" loop preload="none">
+  <source src="https://www.bensound.com/bensound-music/bensound-tenderness.mp3" type="audio/mpeg">
+</audio>
+
+<footer>made for you</footer>
+
+<script src="main.js"></script>
+<script>
+  var target = new Date("2026-08-06T00:00:00+05:00").getTime();
+
+  var daysEl = document.getElementById('days');
+  var hoursEl = document.getElementById('hours');
+  var minsEl = document.getElementById('minutes');
+  var secsEl = document.getElementById('seconds');
+  var countdownPage = document.getElementById('countdownPage');
+  var celebrateEl = document.getElementById('celebrate');
+  var units = document.querySelectorAll('.unit');
+
+  function pad(n){ return String(n).padStart(2, '0'); }
+
+  function bump(){
+    units.forEach(function(u){
+      u.classList.add('bump');
+      setTimeout(function(){ u.classList.remove('bump'); }, 220);
+    });
+  }
+
+  var confettiFired = false;
+
+  function tick(){
+    var now = Date.now();
+    var diff = target - now;
+
+    if (diff <= 0){
+      countdownPage.style.display = 'none';
+      celebrateEl.classList.add('show');
+      if (!confettiFired){
+        confettiFired = true;
+        fireConfetti(celebrateEl);
+        setInterval(function(){ fireConfetti(celebrateEl); }, 6000);
+      }
+      clearInterval(timer);
+      return;
+    }
+
+    var d = Math.floor(diff / 86400000);
+    var h = Math.floor((diff % 86400000) / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+
+    daysEl.textContent = pad(d);
+    hoursEl.textContent = pad(h);
+    minsEl.textContent = pad(m);
+    secsEl.textContent = pad(s);
+    bump();
+  }
+
+  var timer = setInterval(tick, 1000);
+  tick();
+</script>
+</body>
+</html>
